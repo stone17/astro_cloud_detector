@@ -31,6 +31,22 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+1. Clone this repo.
+2. Create 2 folders in the repo folder, named clouds and no-clouds, and add your images for training into them
+3. Train the model:
+```bash
+python cloud_detector.py --train
+```
+4. Verify the model:
+```bash
+python cloud_detector.py --image path/to/image.jpg
+```
+5. Watch a file and continously predict on change:
+```bash
+python cloud_watcher.py --file path/to/watch_file
+```
+
+## Detailed description
 
 ### Training the Model
 
