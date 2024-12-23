@@ -63,17 +63,17 @@ python cloud_detector.py --train --data_dir path/to/data --image_size 256 --batc
 ### Predicting on a Single Image
 
 ```bash
-python cloud_detector.py --model path/to/cloud_model.h5 --image path/to/image.jpg --image_size 256
+python cloud_detector.py --model path/to/cloud_model.keras --image path/to/image.jpg --image_size 256
 ```
 
-*   `--model`: Path to the trained model (`.h5` file).
+*   `--model`: Path to the trained model (`.keras` file).
 *   `--image`: Path to the image for prediction.
 *   `--image_size`: Image size used during training.
 
 ### Monitoring a Directory
 
 ```bash
-python cloud_watcher.py --file path/to/watch_file --model path/to/cloud_model.h5 --output predictions.txt --image_size 256
+python cloud_watcher.py --file path/to/watch_file --model path/to/cloud_model.keras --output predictions.txt --image_size 256
 ```
 
 *   `--file`: File to watch for changes (touch this file to trigger prediction).
