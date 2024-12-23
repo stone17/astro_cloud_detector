@@ -10,11 +10,17 @@ cloud-detection/
 ├── cloud_functions.py  # Contains core functions for data handling, model training, and prediction.
 ├── cloud_detector.py   # Main script for training and single image prediction.
 └── cloud_watcher.py    # Script for monitoring a directory and making predictions.
+└── requirements.txt    # Lists project dependencies.
 ```
 
 ## Requirements
 
 *   Python 3.7+
+*   TensorFlow 2.x
+*   scikit-learn
+*   astropy
+*   NumPy <2.0
+
 
 Install dependencies:
 
