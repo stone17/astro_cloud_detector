@@ -41,7 +41,7 @@ python cloud_detector.py --train
 ```bash
 python cloud_detector.py --image path/to/image.jpg
 ```
-5. Watch a file and continously predict on change:
+5. Watch a file and continuously predict on change:
 ```bash
 python cloud_watcher.py --file path/to/watch_file
 ```
