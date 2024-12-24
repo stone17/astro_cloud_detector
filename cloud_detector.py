@@ -1,5 +1,6 @@
 import argparse
 import sys
+import time
 from cloud_functions import load_data, train_model, predict_image, load_model, save_model, print_model_info
 
 def main():
@@ -17,21 +18,33 @@ def train(data_dir, image_size, batch_size, epochs, model_output):
         return
     model = train_model(images, labels, image_size, batch_size, epochs, model_output)
     if model is not None:
-        print(f"Model saved to {model_output}.h5")
+        print(f"Model saved to {model_output}.keras")
     else:
         print("Model training failed. Check for errors during training.")
 
 def predict(model_path, image_path, image_size):
     model = load_model(model_path)
     print_model_info(model, [image_size, image_size])
+    print()
     if model is None:
         print(f"Failed to load model from {model_path}")
         return
+
+    # Start measuring inference time
+    start_time = time.time()
+
+    # Make prediction using the model
     prediction = predict_image(model, image_path, image_size)
+
+    # End measuring inference time
+    inference_time = time.time() - start_time
+
     if prediction is not None:
         prediction_label = "Clouds" if prediction > 0.5 else "No Clouds"
         print(f"Cloud probability: {prediction:.4f}")
         print(f"Prediction: {prediction_label}")
+        print(f"Inference Time: {inference_time:.4f} seconds")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train or predict cloud presence in images.")
