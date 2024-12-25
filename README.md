@@ -2,7 +2,7 @@
 
 This project uses a Convolutional Neural Network (CNN) to detect the presence of clouds in images. It provides scripts for training the model, making predictions on single images, and monitoring a directory for new images.
 
-![Alt text](iamges/cloud_gui.png)
+![Alt text](images/cloud_gui.png)
 
 ## Project Structure
 
