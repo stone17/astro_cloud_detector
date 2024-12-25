@@ -15,7 +15,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 warnings.filterwarnings('ignore')
 tf.get_logger().setLevel('ERROR')
 
-def load_and_preprocess_image(image_path, image_size, is_training=False):
+def load_and_preprocess_image(image_path, image_size):
     """Loads and preprocesses a single image."""
     target_size = (image_size, image_size)
     try:
@@ -50,14 +50,14 @@ def load_and_preprocess_image(image_path, image_size, is_training=False):
 
         img_data = img_data / 255.0
 
-        return img_data # Removed the extra expand_dims here
+        return img_data
 
     except Exception as e:
         print(f"Error loading image {image_path}: {e}")
         traceback.print_exc()
         return None
 
-def load_data(data_dir, image_size):
+def load_train_data(data_dir, image_size):
     images = []
     labels = []
     for label, folder in enumerate(['no-clouds', 'clouds']):
@@ -65,7 +65,7 @@ def load_data(data_dir, image_size):
         for filename in os.listdir(folder_path):
             if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.fits')):
                 image_path = os.path.join(folder_path, filename)
-                img_data = load_and_preprocess_image(image_path, image_size) # is_training is False by default
+                img_data = load_and_preprocess_image(image_path, image_size)
                 if img_data is not None:
                     images.append(img_data)
                     labels.append(label)

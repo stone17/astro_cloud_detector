@@ -3,4 +3,5 @@ scikit-learn
 numpy<2.0
 Pillow
 astropy
+pyqt6
 opencv-python

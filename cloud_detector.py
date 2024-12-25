@@ -12,7 +12,7 @@ def main():
         print("Invalid arguments. Please specify either --train or provide both --model and --image arguments.")
 
 def train(data_dir, image_size, batch_size, epochs, model_output):
-    images, labels = cf.load_data(data_dir, image_size)
+    images, labels = cf.load_train_data(data_dir, image_size)
     if images.size == 0:
         print("No images found. Check data directory and file extensions.")
         return

@@ -2,24 +2,31 @@
 
 This project uses a Convolutional Neural Network (CNN) to detect the presence of clouds in images. It provides scripts for training the model, making predictions on single images, and monitoring a directory for new images.
 
+![Alt text](iamges/cloud_gui.png)
+
 ## Project Structure
 
 ```
 cloud-detection/
-├── cloud_model.py      # Defines the CNN model architecture.
-├── cloud_functions.py  # Contains core functions for data handling, model training, and prediction.
-├── cloud_detector.py   # Main script for training and single image prediction.
-└── cloud_watcher.py    # Script for monitoring a directory and making predictions.
-└── requirements.txt    # Lists project dependencies.
+├── cloud_model.py       # Defines the CNN model architecture.
+├── cloud_functions.py   # Contains core functions for data handling, model training, and prediction.
+├── cloud_detector.py    # Main script for training and single image prediction.
+└── cloud_watcher.py     # Script for monitoring a directory and making predictions.
+└── requirements.txt     # Lists project dependencies when using only commandline.
+└── cloud_watcher_gui.py # Lists project dependencies.
+└── requirements_gui.txt # Lists project dependencies when using the GUI.
+
 ```
 
 ## Requirements
 
 *   Python 3.7+
 *   TensorFlow 2.x
+*   Keras
 *   scikit-learn
 *   astropy
 *   NumPy <2.0
+*   opencv-python
 
 
 Install dependencies:
@@ -28,6 +35,12 @@ Install dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
+
+or for using the GUI
+
+```bash
+pip install -r requirements_gui.txt
 ```
 
 ## Usage
@@ -45,6 +58,39 @@ python cloud_detector.py --image path/to/image.jpg
 ```bash
 python cloud_watcher.py --file path/to/watch_file
 ```
+6. Optional: This will launch the Cloud Watcher GUI application.
+```bash
+python cloud_watcher_gui.py
+```
+
+## GUI Instructions
+
+Main Window:
+
+* Image View: Displays the loaded image.
+* Start/Stop Button: Starts or stops the prediction loop.
+* State Label: Shows the current state (Clouds or No Clouds).
+* Cloud Count: Counts the number of consecutive "Clouds" predictions.
+* No Cloud Count: Counts the number of consecutive "No Clouds" predictions.
+* Results File: Select a file to save prediction results.
+
+Using the GUI:
+
+1. Click the "Select Image" button and choose an image file.
+2. Optionally, select a results file (.txt) to save prediction results.
+3. Click the "Start Watching" button to begin processing the image in a loop.
+4. The application will display the predicted state (Clouds or No Clouds) in the "State Label".
+5. Consecutive cloud and no-cloud predictions are counted and displayed.
+6. To stop processing, click the "Stop Watching" button.
+
+## Configuration (Optional)
+
+The application can optionally save and load settings related to file paths and prediction thresholds.
+
+## Cloud Detection Model
+
+This application requires a cloud detection model. You can need train your own model using step 3.
+
 
 ## Detailed description
 
