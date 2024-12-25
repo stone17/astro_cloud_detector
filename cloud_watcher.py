@@ -40,11 +40,10 @@ def watch_file(file_path, model_path, output_file, image_size=256):
                 logging.info(f"File changed: {file_path}. Running prediction...")
                 prediction = predict_image(model, file_path, image_size)
                 if prediction is not None:
-                    prediction_label = "Clouds" if prediction > 0.5 else "No Clouds"
                     with open(output_file, "w") as outfile:
-                        outfile.write(f"Cloud probability: {cloud_probability:.4f}\n")
-                        outfile.write(f"Prediction: {prediction_label}\n")
-                    logging.info(f"Prediction: {prediction_label} (Probability: {cloud_probability:.4f})")
+                        outfile.write(f"Cloud probability: {prediction['value']:.4f}\n")
+                        outfile.write(f"Prediction: {prediction['label']}\n")
+                    logging.info(f"Prediction: {prediction['label']} (Probability: {prediction['value']:.4f})")
                     logging.info(f"Prediction saved to {output_file}")
                 else:
                     logging.error("Prediction failed.")

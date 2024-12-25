@@ -8,6 +8,7 @@ from astropy.io import fits
 import warnings
 import traceback
 import cv2
+import time
 
 # Suppress TensorFlow and Python warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -130,12 +131,19 @@ def load_model(model_path):
         return None
 
 def predict_image(model, image_path, image_size):
+    result = None
     try:
+        # Start measuring inference time
+        start_time = time.time()
+
         img_array = load_and_preprocess_image(image_path, image_size)
         if img_array is None:
-            return None
+            return result
         img_array = np.expand_dims(img_array, axis=0)
         prediction = model.predict(img_array)
+
+        # End measuring inference time
+        inference_time = time.time() - start_time
 
         if isinstance(prediction, np.ndarray):
             if prediction.ndim > 0:
@@ -146,10 +154,27 @@ def predict_image(model, image_path, image_size):
             prediction_value = prediction
         else:
             raise TypeError(f"Unexpected prediction type: {type(prediction)}")
+            return result
 
-        return prediction_value
+        result = {
+            'value': prediction_value,
+            'label': "Clouds" if prediction > 0.5 else "No Clouds",
+            'inference_time': inference_time,
+        }
+        return result
 
     except Exception as e:
         print(f"Error during prediction: {e}")
         traceback.print_exc()
-        return None
+        return result
+
+def print_prediction(prediction):
+    if not isinstance(prediction, dict):
+        raise TypeError(f"Expectect dict. Unexpected prediction: {type(prediction)}")
+        return
+    try:
+        print(f"Prediction:     {prediction['label']}")
+        print(f"Value:          {prediction['value']:1.3f}")
+        print(f"Inference Time: {prediction['inference_time']:2.3f}s")
+    except Exception as e:
+        traceback.print_exc()

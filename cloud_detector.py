@@ -1,7 +1,7 @@
 import argparse
 import sys
 import time
-from cloud_functions import load_data, train_model, predict_image, load_model, save_model, print_model_info
+import cloud_functions as cf 
 
 def main():
     if args.train:
@@ -12,38 +12,27 @@ def main():
         print("Invalid arguments. Please specify either --train or provide both --model and --image arguments.")
 
 def train(data_dir, image_size, batch_size, epochs, model_output):
-    images, labels = load_data(data_dir, image_size)
+    images, labels = cf.load_data(data_dir, image_size)
     if images.size == 0:
         print("No images found. Check data directory and file extensions.")
         return
-    model = train_model(images, labels, image_size, batch_size, epochs, model_output)
+    model = cf.train_model(images, labels, image_size, batch_size, epochs, model_output)
     if model is not None:
         print(f"Model saved to {model_output}.keras")
     else:
         print("Model training failed. Check for errors during training.")
 
 def predict(model_path, image_path, image_size):
-    model = load_model(model_path)
-    print_model_info(model, [image_size, image_size])
+    model = cf.load_model(model_path)
+    cf.print_model_info(model, [image_size, image_size])
     print()
     if model is None:
         print(f"Failed to load model from {model_path}")
         return
 
-    # Start measuring inference time
-    start_time = time.time()
-
     # Make prediction using the model
-    prediction = predict_image(model, image_path, image_size)
-
-    # End measuring inference time
-    inference_time = time.time() - start_time
-
-    if prediction is not None:
-        prediction_label = "Clouds" if prediction > 0.5 else "No Clouds"
-        print(f"Cloud probability: {prediction:.4f}")
-        print(f"Prediction: {prediction_label}")
-        print(f"Inference Time: {inference_time:.4f} seconds")
+    prediction = cf.predict_image(model, image_path, image_size)
+    cf.print_prediction(prediction)
 
 
 if __name__ == "__main__":
