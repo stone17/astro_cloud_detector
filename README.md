@@ -63,7 +63,7 @@ python cloud_watcher.py --file path/to/watch_file
 python cloud_watcher_gui.py
 ```
 
-## GUI Instructions
+## Watcher GUI Instructions
 
 Main Window:
 
@@ -83,27 +83,49 @@ Using the GUI:
 5. Consecutive cloud and no-cloud predictions are counted and displayed.
 6. To stop processing, click the "Stop Watching" button.
 
-## Configuration (Optional)
+### Configuration (Optional)
 
 The application can optionally save and load settings related to file paths and prediction thresholds.
 
 ## Cloud Detection Model
 
-This application requires a cloud detection model. You need to train your own model using step 3.
+### Training a Model
 
-## Detailed description
+**Gather training data:**
+* Prepare a dataset of images containing clouds and clear skies.
+* Ensure images have consistent dimensions (e.g., 800x600 pixels).
+* Organize images into subfolders named "clouds" and "no-clouds".
 
-### Training the Model
+There are two ways to train a model: using the command line or using the graphical user interface (GUI).
+
+**1. Command-Line Training:**
 
 ```bash
 python cloud_detector.py --train --data_dir path/to/data --image_size 256 --batch_size 32 --epochs 30 --model_output cloud_model
 ```
 
 *   `--data_dir`: Path to training data (organized in `clouds` and `no-clouds` subdirectories).
-*   `--image_size`: Image resize dimension (e.g., 256x256).
+
+Optional:
+
+*   `--image_size`: Image size after resize (e.g., 256x256).
 *   `--batch_size`: Training batch size.
 *   `--epochs`: Number of training epochs.
 *   `--model_output`: Output path for the trained model (without extension).
+
+**2. GUI Training: (Experimental)**
+
+```bash
+python cloud_training_gui.py
+```
+**Use the Training GUI:**
+* **Data Path:** Click "Select Data Path" and choose the directory containing your "clouds" and "no-clouds" subfolders.
+* **Training Parameters:** Enter the desired number of epochs, batch size, and learning rate in the respective input fields.
+* **Start Training:** Click "Start Training" to begin the training process. The GUI will display real-time plots of training loss, validation loss, and training accuracy.
+* **Stop Training:** Click "Stop Training" to interrupt the training process if needed.
+* **Model Output:** The trained model will be saved to the specified output path.
+
+**Note:** Training time depends on the size and complexity of your dataset and available computational resources.
 
 ### Predicting on a Single Image
 
@@ -115,13 +137,16 @@ python cloud_detector.py --model path/to/cloud_model.keras --image path/to/image
 *   `--image`: Path to the image for prediction.
 *   `--image_size`: Image size used during training.
 
-### Monitoring a Directory
+### Monitoring a Directory using commandline
 
 ```bash
 python cloud_watcher.py --file path/to/watch_file --model path/to/cloud_model.keras --output predictions.txt --image_size 256
 ```
 
 *   `--file`: File to watch for changes (touch this file to trigger prediction).
+
+Optional:
+
 *   `--model`: Path to the trained model.
 *   `--output`: Output file for predictions.
 *   `--image_size`: Image size used during training.
