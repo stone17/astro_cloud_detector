@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow.keras.callbacks import Callback
 import os
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -14,6 +15,15 @@ import time
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 warnings.filterwarnings('ignore')
 tf.get_logger().setLevel('ERROR')
+
+class TrainingCallback(Callback):
+    def __init__(self, epoch_end_callback):
+        super().__init__()
+        self.epoch_end_callback = epoch_end_callback
+
+    def on_epoch_end(self, epoch, logs=None):
+        if self.epoch_end_callback:
+            self.epoch_end_callback(epoch, logs)
 
 def load_and_preprocess_image(image_path, image_size):
     """Loads and preprocesses a single image."""
@@ -62,13 +72,18 @@ def load_train_data(data_dir, image_size):
     labels = []
     for label, folder in enumerate(['no-clouds', 'clouds']):
         folder_path = os.path.join(data_dir, folder)
-        for filename in os.listdir(folder_path):
+        file_list = os.listdir(folder_path)
+        num_files = len(file_list)
+        print(f'Loading files from {folder}:')
+        for idx, filename in enumerate(file_list):
+            print(f'File {idx+1:5d}/{num_files:d}', end='\r')
             if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.fits')):
                 image_path = os.path.join(folder_path, filename)
                 img_data = load_and_preprocess_image(image_path, image_size)
                 if img_data is not None:
                     images.append(img_data)
                     labels.append(label)
+        print()
     return np.array(images), np.array(labels)
 
 def print_model_info(model, input_shape):
@@ -76,14 +91,15 @@ def print_model_info(model, input_shape):
     print("Model Input Shape:", input_shape)
     model.summary()
 
-def train_model(images, labels, image_size, batch_size, epochs, model_output):
+def train_model(images, labels, image_size, batch_size, epochs, model_output, learning_rate=0.001, training_event=None):
     try:
         X_train, X_val, y_train, y_val = train_test_split(images, labels, test_size=0.2, random_state=42)
         class_weights = class_weight.compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
         class_weights_dict = dict(enumerate(class_weights))
         input_shape = images[0].shape
         model = create_cloud_model(input_shape)
-        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+        model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
         print_model_info(model, input_shape)
 
         checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
@@ -98,12 +114,16 @@ def train_model(images, labels, image_size, batch_size, epochs, model_output):
         X_train = np.stack(X_train, axis=0) # Added stacking here
         X_val = np.stack(X_val, axis=0) # Added stacking here
 
+        callback_list = [checkpoint_callback, early_stopping]
+        if training_event is not None:
+            callback_list.append(training_event)
+
         model.fit(
             X_train, y_train,
             batch_size=batch_size,
             epochs=epochs,
             validation_data=(X_val, y_val),
-            callbacks=[checkpoint_callback, early_stopping],
+            callbacks= callback_list,
             class_weight=class_weights_dict
         )
         return model

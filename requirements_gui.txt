@@ -5,3 +5,4 @@ Pillow
 astropy
 pyqt6
 opencv-python
+pyqtgraph
