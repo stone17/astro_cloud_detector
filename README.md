@@ -35,7 +35,7 @@ cloud-detection/
 
 
 
-Install dependencies:
+## Install dependencies:
 
 **To install the packages, navigate to the project's root directory in your terminal or command prompt and run the following command:**
 
