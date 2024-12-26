@@ -8,13 +8,14 @@ This project uses a Convolutional Neural Network (CNN) to detect the presence of
 
 ```
 cloud-detection/
-├── cloud_model.py       # Defines the CNN model architecture.
-├── cloud_functions.py   # Contains core functions for data handling, model training, and prediction.
-├── cloud_detector.py    # Main script for training and single image prediction.
-└── cloud_watcher.py     # Script for monitoring a directory and making predictions.
-└── requirements.txt     # Lists project dependencies when using only commandline.
-└── cloud_watcher_gui.py # Lists project dependencies.
-└── requirements_gui.txt # Lists project dependencies when using the GUI.
+├── cloud_model.py         # Defines the CNN model architecture.
+├── cloud_functions.py     # Contains core functions for data handling, model training, and prediction.
+├── cloud_detector.py      # Main script for training and single image prediction.
+└── cloud_watcher.py       # Script for monitoring a directory and making predictions.
+└── requirements.txt       # Lists project dependencies when using only commandline.
+└── cloud_watcher_gui.py   # Clout Watcher GUI with PyQT6
+└── cloud_training_gui.py  # Clout Training GUI with PyQT6
+└── requirements_gui.txt   # Lists project dependencies when using the GUI.
 
 ```
 
@@ -27,6 +28,11 @@ cloud-detection/
 *   astropy
 *   NumPy <2.0
 *   opencv-python
+
+## Requirements GUI
+*   PyQT6
+*   PyQTGraph
+
 
 
 Install dependencies:
@@ -98,7 +104,7 @@ The application can optionally save and load settings related to file paths and 
 
 There are two ways to train a model: using the command line or using the graphical user interface (GUI).
 
-**1. Command-Line Training:**
+**1. Command-Line Training: (Recommended)**
 
 ```bash
 python cloud_detector.py --train --data_dir path/to/data --image_size 256 --batch_size 32 --epochs 30 --model_output cloud_model
