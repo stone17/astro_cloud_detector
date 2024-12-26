@@ -16,14 +16,26 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 warnings.filterwarnings('ignore')
 tf.get_logger().setLevel('ERROR')
 
-class TrainingCallback(Callback):
-    def __init__(self, epoch_end_callback):
+
+class BatchUpdateCallback(Callback):
+    def __init__(self, batch_update_callback):
         super().__init__()
-        self.epoch_end_callback = epoch_end_callback
+        self.batch_update_callback = batch_update_callback
+        self.steps_per_epoch = None
+        self.epoch = 0
+
+    def on_train_begin(self, logs=None):
+        self.steps_per_epoch = self.params['steps']
+
+    def on_train_batch_end(self, batch, logs=None):
+        if self.batch_update_callback:
+            self.epoch += 1/self.steps_per_epoch
+            self.batch_update_callback(batch, logs, self.epoch)
 
     def on_epoch_end(self, epoch, logs=None):
-        if self.epoch_end_callback:
-            self.epoch_end_callback(epoch, logs)
+        if self.batch_update_callback:
+            self.batch_update_callback("epoch_end", logs, self.epoch)
+
 
 def load_and_preprocess_image(image_path, image_size):
     """Loads and preprocesses a single image."""
@@ -91,7 +103,7 @@ def print_model_info(model, input_shape):
     print("Model Input Shape:", input_shape)
     model.summary()
 
-def train_model(images, labels, image_size, batch_size, epochs, model_output, learning_rate=0.001, training_event=None):
+def train_model(images, labels, image_size, batch_size, epochs, model_output, learning_rate=0.001, training_callback=None):
     try:
         X_train, X_val, y_train, y_val = train_test_split(images, labels, test_size=0.2, random_state=42)
         class_weights = class_weight.compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
@@ -115,8 +127,8 @@ def train_model(images, labels, image_size, batch_size, epochs, model_output, le
         X_val = np.stack(X_val, axis=0) # Added stacking here
 
         callback_list = [checkpoint_callback, early_stopping]
-        if training_event is not None:
-            callback_list.append(training_event)
+        if training_callback is not None:
+            callback_list.append(training_callback)
 
         model.fit(
             X_train, y_train,

@@ -60,8 +60,9 @@ class PredictionThread(QThread):
                                 h, w, ch = img.shape
                                 bytesPerLine = ch * w
                                 convert_to_qt_format = QImage(img.data, w, h, bytesPerLine, QImage.Format.Format_RGB888)
-
-                            self.prediction_signal.emit(f"Prediction: {prediction['label']} (Probability: {prediction['value']:.4f})", convert_to_qt_format)
+                            if prediction['label'] == 'No Clouds':
+                                prediction['value'] = 1 - prediction['value']
+                            self.prediction_signal.emit(f"Prediction: {prediction['label']} (Value: {prediction['value']:.4f})", convert_to_qt_format)
                         else:
                             self.error_signal.emit("Could not read image for display.")
                     else:

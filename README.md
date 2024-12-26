@@ -45,7 +45,7 @@ pip install -r requirements_gui.txt
 
 ## Usage
 1. Clone this repo.
-2. Create 2 folders in the repo folder, named clouds and no-clouds, and add your images for training into them
+2. Sort your images for training into the 2 folders named clouds and no-clouds
 3. Train the model:
 ```bash
 python cloud_detector.py --train
@@ -89,8 +89,7 @@ The application can optionally save and load settings related to file paths and 
 
 ## Cloud Detection Model
 
-This application requires a cloud detection model. You can need train your own model using step 3.
-
+This application requires a cloud detection model. You need to train your own model using step 3.
 
 ## Detailed description
 
