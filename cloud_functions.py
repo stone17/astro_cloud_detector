@@ -41,7 +41,12 @@ def load_and_preprocess_image(image_path, image_size):
     """Loads and preprocesses a single image."""
     target_size = (image_size, image_size)
     try:
-        if image_path.lower().endswith('.fits'):
+        if isinstance(image_path, np.ndarray):
+            img = image_path
+            img_data = cv2.resize(img, target_size)
+            if len(img_data.shape) == 2:
+                img_data = np.stack([img_data, img_data, img_data], axis=-1)
+        elif image_path.lower().endswith('.fits'):
             with fits.open(image_path) as hdul:
                 img_data = hdul[0].data
                 # FITS data normalization
