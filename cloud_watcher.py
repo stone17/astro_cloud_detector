@@ -5,12 +5,7 @@ from cloud_functions import predict_image, load_model
 import logging
 import sys
 import warnings
-import tensorflow as tf
 
-# Suppress TensorFlow and Python warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-warnings.filterwarnings('ignore')
-tf.get_logger().setLevel('ERROR')
 
 def watch_file(file_path, model_path, output_file, image_size=256):
     """Watches a specific file for changes and runs prediction."""

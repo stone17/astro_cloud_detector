@@ -47,10 +47,12 @@ def watch_webpage(image_url, model_path, output_file, image_size=256, check_inte
                 logging.info(f"Image on webpage might have changed. Running prediction...")
                 prediction = predict_image(model, np.asarray(image), image_size)
                 if prediction is not None:
-                    timestamp = datetime.datetime.now().strftime("%d/%m/%y %H:%M:%S ") # Get timestamp
+                    timestamp = datetime.datetime.now().strftime("%d/%m/%y %H:%M:%S ")
                     with open(output_file, "w") as outfile:
                         outfile.write(f"{timestamp} Prediction: {prediction['label']}\n")
                     logging.info(f"{timestamp} Prediction: {prediction['label']} (Value: {prediction['value']:.4f})")
+                    if args.save_folder is not None:
+                        save_image(image, args.save_folder, prediction['label'])
                 else:
                     logging.error("Prediction failed.")
                 previous_image_hash = current_image_hash
@@ -64,6 +66,22 @@ def watch_webpage(image_url, model_path, output_file, image_size=256, check_inte
             logging.error(f"An unexpected error occurred: {e}")
             time.sleep(check_interval)
 
+def save_image(image, save_folder, label, filename_prefix="downloaded_image"):
+    """Saves a PIL Image to a subfolder based on the label."""
+    try:
+        label_folder = os.path.join(save_folder, label)
+        os.makedirs(label_folder, exist_ok=True)
+
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = f"{timestamp}_image.jpg"
+        filepath = os.path.join(label_folder, filename)
+        image.save(filepath)
+        logging.info(f"Image saved to: {filepath}")
+        return filepath
+    except Exception as e:
+        logging.error(f"Error saving image: {e}")
+        return None
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Watch a webpage for image changes and run prediction.")
     parser.add_argument("--url", type=str, required=True, help="URL of the webpage containing the image.")
@@ -71,6 +89,7 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=str, default="prediction_result.txt", help="Path to save the prediction result.")
     parser.add_argument("--image_size", type=int, default=256, help="Image size (height and width).")
     parser.add_argument("--interval", type=int, default=30, help="Check interval in seconds.")
+    parser.add_argument("--save_folder", type=str, default=None, help="Folder to save downloaded images.")
     args = parser.parse_args()
 
     # Configure logging
