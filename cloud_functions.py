@@ -73,7 +73,7 @@ def load_and_preprocess_image(image_path, image_size):
                 raise ValueError(f"Could not read image at {image_path}")
             img_data = cv2.resize(img, target_size)
             if len(img_data.shape) == 2:
-                img_data = np.stack([img_data, img_data, img_data], axis=-1)
+                img_data = np.stack([img_data, img_data, img_data], axis=-1, dtype=np.float32)
 
         img_data = img_data / 255.0
 
@@ -126,7 +126,7 @@ def train_model(images, labels, image_size, batch_size, epochs, model_output, le
             save_weights_only=False,
             verbose=1
         )
-        early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+        early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=7, restore_best_weights=True)
 
         X_train = np.stack(X_train, axis=0) # Added stacking here
         X_val = np.stack(X_val, axis=0) # Added stacking here
